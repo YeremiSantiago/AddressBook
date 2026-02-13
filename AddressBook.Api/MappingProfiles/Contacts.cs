@@ -8,12 +8,15 @@ namespace AddressBook.Api.MappingProfiles
         {
             //Entidad a DTO
             CreateMap<Models.Contact, DTOs.ContactReadDTO>()
-                .ForMember(dest => dest.ContactTypeName, src => src.MapFrom(o => o.ContactType.Name)); 
+                .ForMember(dest => dest.ContactTypeName, src => src.MapFrom(o => o.ContactType.Name));
+                 
 
             // --> / <--
             //DTO a Entidad
             CreateMap<DTOs.ContactRequestDTO, Models.Contact>()
-                .ForMember(dest => dest.Id, src => src.Ignore());
+                .ForMember(dest => dest.Id, src => src.Ignore())
+                .ForMember(dest => dest.CreationDate, src => src.Ignore())
+                .ForMember(dest => dest.UpdateDate, src => src.Ignore());
         }
     }
 }

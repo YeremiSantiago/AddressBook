@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore.Migrations;
+﻿using System;
+using Microsoft.EntityFrameworkCore.Migrations;
 
 #nullable disable
 
@@ -37,7 +38,9 @@ namespace AddressBook.Api.Migrations
                     Email = table.Column<string>(type: "TEXT", maxLength: 200, nullable: true),
                     Phone = table.Column<string>(type: "TEXT", maxLength: 20, nullable: true),
                     Address = table.Column<string>(type: "TEXT", maxLength: 200, nullable: true),
-                    ContactTypeId = table.Column<int>(type: "INTEGER", nullable: false)
+                    ContactTypeId = table.Column<int>(type: "INTEGER", nullable: false),
+                    CreationDate = table.Column<DateOnly>(type: "TEXT", nullable: false),
+                    UpdateDate = table.Column<DateOnly>(type: "TEXT", nullable: false)
                 },
                 constraints: table =>
                 {

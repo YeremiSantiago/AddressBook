@@ -33,6 +33,9 @@ namespace AddressBook.Api.Services
         public Contact AddContact(ContactRequestDTO contactDto)
         {
             var contact = _mapper.Map<Contact>(contactDto);
+
+            contact.CreationDate = DateOnly.FromDateTime(DateTime.UtcNow);
+
             _context.Contacts.Add(contact);
             _context.SaveChanges();
 
@@ -44,6 +47,9 @@ namespace AddressBook.Api.Services
             var contact = _context.Contacts.Find(id);
 
             _mapper.Map(contactDto, contact);
+
+            contact.UpdateDate = DateOnly.FromDateTime(DateTime.UtcNow);
+
             _context.SaveChanges();
         }
 

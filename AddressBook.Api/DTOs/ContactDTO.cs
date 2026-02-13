@@ -2,6 +2,7 @@
 using Swashbuckle.AspNetCore.Annotations;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using System.Text.Json.Serialization;
 
 namespace AddressBook.Api.DTOs
 {
@@ -36,6 +37,9 @@ namespace AddressBook.Api.DTOs
     public class ContactReadDTO : ContactBaseDTO
     {
         public string ContactTypeName { get; set; }
+        public DateOnly CreationDate { get; set; }
+        public DateOnly? UpdateDate { get; set; }
+
     }
 
     public class ContactRequestDTO : ContactBaseDTO

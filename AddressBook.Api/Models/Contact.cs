@@ -32,6 +32,10 @@ namespace AddressBook.Api.Models
         [ForeignKey(nameof(ContactType))]
         public int ContactTypeId { get; set; }
 
+        public DateOnly CreationDate { get; set; }
+
+        public DateOnly UpdateDate { get; set; }
+
         public ContactType ContactType { get; set; }
     }
 }

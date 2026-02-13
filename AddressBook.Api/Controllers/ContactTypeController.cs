@@ -1,4 +1,6 @@
-﻿using AddressBook.Api.Models;
+﻿using AddressBook.Api.DTOs;
+using AddressBook.Api.DTOs.ContactTypeDTO;
+using AddressBook.Api.Models;
 using AddressBook.Api.Services;
 using Microsoft.AspNetCore.Mvc;
 using Swashbuckle.AspNetCore.Annotations;
@@ -18,14 +20,14 @@ namespace AddressBook.Api.Controllers
 
         [HttpGet]
         [SwaggerOperation("Gets all contact types")]
-        public async Task<ActionResult<IEnumerable<ContactType>>> GetAllAsync()
+        public async Task<ActionResult<IEnumerable<ContactTypeReadDTO>>> GetAllAsync()
         {
             return Ok(await _contactTypeService.GetAllContactTypeAsync());
         }
 
         [HttpGet("{id}")]
         [SwaggerOperation("Gets a contact type by ID")]
-        public async Task<ActionResult<ContactType>> GetByIdAsync(int id)
+        public async Task<ActionResult<ContactTypeReadDTO>> GetByIdAsync(int id)
         {
             var ExistedContactType = await _contactTypeService.GetContactTypeByIdAsync(id);
 
@@ -38,9 +40,9 @@ namespace AddressBook.Api.Controllers
 
         [HttpPost]
         [SwaggerOperation("Creates a new contact type")]
-        public async Task<ActionResult> CreateAsync([FromBody] ContactType contactType)
+        public async Task<ActionResult> CreateAsync([FromBody] ContactTypeRequestDTO request)
         {
-            var createdContactT = await _contactTypeService.CreateContactTypeAsync(contactType);
+            var createdContactT = await _contactTypeService.CreateContactTypeAsync(request);
 
             return StatusCode(201, createdContactT);
 
@@ -48,7 +50,7 @@ namespace AddressBook.Api.Controllers
 
         [SwaggerOperation("Updates an existing contact type")]
         [HttpPut("{id}")]
-        public async Task<ActionResult> UpdateAsync(int id, [FromBody] ContactType contactType)
+        public async Task<ActionResult> UpdateAsync(int id, [FromBody] ContactTypeRequestDTO request)
         {
             var existing = await _contactTypeService.GetContactTypeByIdAsync(id);
 
@@ -57,9 +59,7 @@ namespace AddressBook.Api.Controllers
                 return NotFound();
             }
 
-            contactType.Id = id;
-
-            await _contactTypeService.UpdateContactTypeAsync(id, contactType);
+            await _contactTypeService.UpdateContactTypeAsync(id, request);
             return NoContent();
         }
 
