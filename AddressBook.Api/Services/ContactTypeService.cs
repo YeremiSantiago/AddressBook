@@ -51,7 +51,11 @@ namespace AddressBook.Api.Services
                 await _context.SaveChangesAsync();
 
             }
+        }
 
+        public bool ContactTypeExistsAsync(int id)
+        {
+            return _context.ContactTypes.Any(x => x.Id == id);
         }
 
     }

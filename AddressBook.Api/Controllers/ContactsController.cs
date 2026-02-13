@@ -13,12 +13,15 @@ namespace AddressBook.Api.Controllers
     public class ContactsController : ControllerBase
     {
         private readonly ContactService _service;
+        private readonly ContactTypeService _contactTypeService;
         public ContactsController
         (
-            ContactService service
+            ContactService service,
+            ContactTypeService contactTypeService
         )
         {
             _service = service;
+            _contactTypeService = contactTypeService;
         }
 
         [HttpGet]
@@ -41,8 +44,21 @@ namespace AddressBook.Api.Controllers
         [SwaggerOperation("Creates a new contact")]
         public ActionResult Post([FromBody] ContactRequestDTO request)
         {
-            var result = _service.AddContact(request);
+            var duplicateContactExists = _service.ContactWithSameNameExistsAsync(request.FirstName, request.LastName);
 
+            if (duplicateContactExists)
+            {
+                return BadRequest("A contact with the same first and last name already exists.");
+            }
+
+            var categoryTypeExists = _contactTypeService.ContactTypeExistsAsync(request.ContactTypeId);
+
+            if (!categoryTypeExists)
+            {
+                return BadRequest($"ContactType with ID {request.ContactTypeId} does not exist.");
+            }
+
+            var result = _service.AddContact(request);
             return CreatedAtAction("Get", result.Id);
         }
 
@@ -51,6 +67,13 @@ namespace AddressBook.Api.Controllers
         [SwaggerOperation("Updates a contact by id")]
         public ActionResult Put(int id, [FromBody] ContactRequestDTO request)
         {
+            var categoryTypeExists = _contactTypeService.ContactTypeExistsAsync(request.ContactTypeId);
+
+            if (!categoryTypeExists)
+            {
+                return BadRequest($"ContactType with ID {request.ContactTypeId} does not exist.");
+            }
+
             _service.UpdateContact(id, request);
 
             return NoContent();

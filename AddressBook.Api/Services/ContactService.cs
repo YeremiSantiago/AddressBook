@@ -2,6 +2,7 @@
 using AddressBook.Api.Models;
 using AutoMapper;
 using Microsoft.EntityFrameworkCore;
+using System.Collections.Generic;
 
 namespace AddressBook.Api.Services
 {
@@ -53,5 +54,11 @@ namespace AddressBook.Api.Services
             _context.Contacts.Remove(contact);
             _context.SaveChanges();
         }
+
+        public bool ContactWithSameNameExistsAsync(string name, string lastName)
+        {
+            return _context.Contacts.Any(x => x.FirstName == name && x.LastName == lastName);
+        }
+
     }
 }
