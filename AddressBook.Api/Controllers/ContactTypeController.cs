@@ -27,7 +27,13 @@ namespace AddressBook.Api.Controllers
         [SwaggerOperation("Gets a contact type by ID")]
         public async Task<ActionResult<ContactType>> GetByIdAsync(int id)
         {
-            return Ok(await _contactTypeService.GetContactTypeByIdAsync(id));
+            var ExistedContactType = await _contactTypeService.GetContactTypeByIdAsync(id);
+
+            if(ExistedContactType == null)
+            {
+                return NotFound();
+            }
+            return Ok(ExistedContactType);
         }
 
         [HttpPost]
@@ -44,7 +50,15 @@ namespace AddressBook.Api.Controllers
         [HttpPut("{id}")]
         public async Task<ActionResult> UpdateAsync(int id, [FromBody] ContactType contactType)
         {
+            var existing = await _contactTypeService.GetContactTypeByIdAsync(id);
+
+            if(existing == null)
+            {
+                return NotFound();
+            }
+
             contactType.Id = id;
+
             await _contactTypeService.UpdateContactTypeAsync(id, contactType);
             return NoContent();
         }
@@ -53,6 +67,13 @@ namespace AddressBook.Api.Controllers
         [SwaggerOperation("Deletes a contact type")]
         public async Task<ActionResult> DeleteAsync(int id)
         {
+            var existing = await _contactTypeService.GetContactTypeByIdAsync(id);
+            
+            if(existing == null)
+            {
+                return NotFound();
+            }
+
             await _contactTypeService.DeleteContactTypeAsync(id);
             return NoContent();
         }
