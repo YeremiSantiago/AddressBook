@@ -11,7 +11,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace AddressBook.Api.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20260213074007_InitialMigration")]
+    [Migration("20260213091442_InitialMigration")]
     partial class InitialMigration
     {
         /// <inheritdoc />
@@ -44,6 +44,9 @@ namespace AddressBook.Api.Migrations
                         .IsRequired()
                         .HasMaxLength(100)
                         .HasColumnType("TEXT");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("INTEGER");
 
                     b.Property<string>("LastName")
                         .IsRequired()

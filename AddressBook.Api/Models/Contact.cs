@@ -35,6 +35,7 @@ namespace AddressBook.Api.Models
         public DateOnly CreationDate { get; set; }
 
         public DateOnly UpdateDate { get; set; }
+        public bool IsDeleted { get; set; } = false;
 
         public ContactType ContactType { get; set; }
     }

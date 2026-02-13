@@ -36,15 +36,28 @@ namespace AddressBook.Api.Controllers
         [SwaggerOperation("Gets a contact by id")]
         public ActionResult<ContactReadDTO> Get(int id)
         {
-            return Ok(_service.GetContactById(id));
+            var contact = _service.GetContactById(id);
+
+            if (contact == null)
+            {
+                return NotFound($"Contact with ID {id} not found.");
+            }
+
+            return Ok(contact);
         }
 
+        [HttpGet("deleted")]
+        [SwaggerOperation("Gets all deleted contacts")]
+        public ActionResult<IEnumerable<ContactReadDTO>> GetAllDeleted()
+        {
+            return Ok(_service.GetAllDeletedContacts()); 
+        }
 
         [HttpPost]
         [SwaggerOperation("Creates a new contact")]
         public ActionResult Post([FromBody] ContactRequestDTO request)
         {
-            var duplicateContactExists = _service.ContactWithSameNameExistsAsync(request.FirstName, request.LastName);
+            var duplicateContactExists = _service.ContactWithSameNameExists(request.FirstName, request.LastName);
 
             if (duplicateContactExists)
             {
@@ -59,11 +72,11 @@ namespace AddressBook.Api.Controllers
             }
 
             var result = _service.AddContact(request);
-            return CreatedAtAction("Get", result.Id);
+            return CreatedAtAction("Get", new { id = result.Id }, result);
         }
 
 
-        [HttpPut]
+        [HttpPut("{id}")]
         [SwaggerOperation("Updates a contact by id")]
         public ActionResult Put(int id, [FromBody] ContactRequestDTO request)
         {
@@ -81,10 +94,26 @@ namespace AddressBook.Api.Controllers
 
 
         [HttpDelete("{id}")]
-        [SwaggerOperation("Deletes a contact by id")]
-        public void Delete(int id)
+        [SwaggerOperation("Deletes a contact by id (soft delete)")]
+        public ActionResult Delete(int id)
         {
             _service.DeleteContact(id);
+            return NoContent();
         }
+
+        [HttpPost("{id}/restore")]
+        [SwaggerOperation("Restores a deleted contact")]
+        public ActionResult Restore(int id)
+        {
+            var restored = _service.RestoreContact(id);
+
+            if (!restored)
+            {
+                return NotFound($"Deleted contact with ID {id} not found.");
+            }
+
+            return Ok(new { message = "Contact restored successfully.", id });
+        }
+
     }
 }

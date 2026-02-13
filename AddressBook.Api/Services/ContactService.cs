@@ -22,12 +22,16 @@ namespace AddressBook.Api.Services
 
         public List<ContactReadDTO> GetAllContacts()
         {
-            return _mapper.Map<List<ContactReadDTO>>(_context.Contacts.Include(c => c.ContactType).ToList());
+            return _mapper.Map<List<ContactReadDTO>>(_context.Contacts.Include(c => c.ContactType)
+                .Where(x => !x.IsDeleted)
+                .ToList());
         }
 
         public ContactReadDTO GetContactById(int id)
         {
-            return _mapper.Map<ContactReadDTO>(_context.Contacts.Include(c => c.ContactType).FirstOrDefault(c => c.Id == id));
+            return _mapper.Map<ContactReadDTO>(_context.Contacts.Include(c => c.ContactType)
+                .Where(x => !x.IsDeleted)
+                .FirstOrDefault(c => c.Id == id));
         }
 
         public Contact AddContact(ContactRequestDTO contactDto)
@@ -35,6 +39,7 @@ namespace AddressBook.Api.Services
             var contact = _mapper.Map<Contact>(contactDto);
 
             contact.CreationDate = DateOnly.FromDateTime(DateTime.UtcNow);
+            contact.IsDeleted = false;
 
             _context.Contacts.Add(contact);
             _context.SaveChanges();
@@ -44,7 +49,12 @@ namespace AddressBook.Api.Services
 
         public void UpdateContact(int id, ContactRequestDTO contactDto)
         {
-            var contact = _context.Contacts.Find(id);
+            var contact = _context.Contacts.FirstOrDefault(c => c.Id == id && !c.IsDeleted);
+
+            if (contact == null)
+            {
+                return;
+            }
 
             _mapper.Map(contactDto, contact);
 
@@ -57,13 +67,40 @@ namespace AddressBook.Api.Services
         {
             var contact = _context.Contacts.Find(id);
 
-            _context.Contacts.Remove(contact);
-            _context.SaveChanges();
+            if (contact != null && !contact.IsDeleted)
+            {
+                contact.IsDeleted = true;
+                contact.UpdateDate = DateOnly.FromDateTime(DateTime.UtcNow);
+                _context.SaveChanges();
+            }
         }
 
-        public bool ContactWithSameNameExistsAsync(string name, string lastName)
+        public bool ContactWithSameNameExists(string name, string lastName)
         {
-            return _context.Contacts.Any(x => x.FirstName == name && x.LastName == lastName);
+            return _context.Contacts.Any(x => x.FirstName == name && x.LastName == lastName && !x.IsDeleted);
+        }
+
+        public IEnumerable<ContactReadDTO> GetAllDeletedContacts()
+        {
+            return _mapper.Map<List<ContactReadDTO>>(_context.Contacts.Include(c => c.ContactType)
+               .Where(x => x.IsDeleted)
+               .ToList());
+        }
+
+        public bool RestoreContact(int id)
+        {
+            var exist = _context.Contacts.FirstOrDefault(x => x.Id == id);
+
+            if (exist == null)
+            {
+                return false;
+            }
+
+            exist.IsDeleted = false;
+            exist.UpdateDate = DateOnly.FromDateTime(DateTime.UtcNow);
+            _context.SaveChanges();
+            return true;
+
         }
 
     }

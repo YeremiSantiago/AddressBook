@@ -40,7 +40,8 @@ namespace AddressBook.Api.Migrations
                     Address = table.Column<string>(type: "TEXT", maxLength: 200, nullable: true),
                     ContactTypeId = table.Column<int>(type: "INTEGER", nullable: false),
                     CreationDate = table.Column<DateOnly>(type: "TEXT", nullable: false),
-                    UpdateDate = table.Column<DateOnly>(type: "TEXT", nullable: false)
+                    UpdateDate = table.Column<DateOnly>(type: "TEXT", nullable: false),
+                    IsDeleted = table.Column<bool>(type: "INTEGER", nullable: false)
                 },
                 constraints: table =>
                 {
