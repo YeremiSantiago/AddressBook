@@ -47,7 +47,7 @@ namespace AddressBook.Api.Controllers
         }
 
 
-        [HttpPut("{id}")]
+        [HttpPut]
         [SwaggerOperation("Updates a contact by id")]
         public ActionResult Put(int id, [FromBody] ContactRequestDTO request)
         {

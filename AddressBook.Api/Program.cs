@@ -19,6 +19,7 @@ builder.Services.AddSwaggerGen(config =>
 builder.Services.AddAutoMapper(typeof(Program));
 
 builder.Services.AddScoped<ContactService>();
+builder.Services.AddScoped<ContactTypeService>();
 
 builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle

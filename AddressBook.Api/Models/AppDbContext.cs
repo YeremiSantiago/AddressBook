@@ -9,6 +9,7 @@ namespace AddressBook.Api.Models
 
         }
         public DbSet<Contact> Contacts { get; set; }
+        public DbSet<ContactType> ContactTypes { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {

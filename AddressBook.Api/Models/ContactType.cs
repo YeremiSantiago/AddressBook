@@ -13,6 +13,6 @@ namespace AddressBook.Api.Models
         [StringLength(250)]
         public string Description { get; set; }
 
-        public ICollection<Contact> Contacts { get; set; }
+        public ICollection<Contact>? Contacts { get; set; }
     }
 }
